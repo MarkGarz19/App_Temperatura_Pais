@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <!-- CDN oficial de Tailwind CSS (versión 3.x) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/cdn.min.js" defer></script>
+</head>
+<body x-data="{ open: false }" class="flex flex-col min-h-screen">
+
+    <header class="bg-blue-200 p-4 w-full">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="{{url_for('index')}}" aria-label="Ir al inicio">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" 
+                     alt="Logo de Tailwind" class="w-32 h-8">
+            </a>
+
+            <!-- Botón de menú móvil -->
+            <button @click="open = !open" class="block md:hidden text-gray-600 hover:text-black focus:text-black focus:outline-none" aria-label="Abrir menú">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+
+            <!-- Menú de navegación para pantallas grandes -->
+            <div class="hidden md:flex space-x-4">
+                <a class="block text-gray-600 hover:text-black" href="{{url_for('insertar')}}">Insertar</a>
+                <a class="block text-gray-600 hover:text-black" href="{{url_for('mostrar')}}">Mostrar</a>
+                <a class="block text-gray-600 hover:text-black" href="{{url_for('busqueda')}}">Búsqueda</a>
+            </div>
+        </nav>
+
+        <!-- Menú móvil -->
+        <div x-show="open" x-transition class="md:hidden space-y-2 mt-2">
+            <a class="block text-gray-600 hover:text-black" href="{{url_for('insertar')}}">Insertar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{url_for('mostrar')}}">Mostrar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{url_for('busqueda')}}">Búsqueda</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto flex-grow flex items-center justify-center pt-20">
+        <div class="text-center">
+            <h1 class="text-3xl font-semibold mb-6">Bienvenido a la App de Temperaturas por Países</h1>
+            <p class="mb-12">
+                Aquí puedes consultar y gestionar datos de temperaturas de diferentes países.<br>
+                Utiliza los botones de abajo para navegar por la aplicación y disfrutar de todas sus funcionalidades.
+            </p>
+
+            <!-- Botones de navegación -->
+            <div class="space-y-4">
+                <a href="{{url_for('insertar')}}" class="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-600 transition duration-300 block">Insertar Todos los Datos</a>
+                <a href="{{url_for('mostrar')}}" class="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-600 transition duration-300 block">Mostrar Temperaturas por País</a>
+                <a href="{{url_for('busqueda')}}" class="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-600 transition duration-300 block">Búsqueda por País</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 w-full mt-auto">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                &copy; 2025 PIA.
+            </div>
+            <div>
+                Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

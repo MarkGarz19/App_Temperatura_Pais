@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperaturas Paises</title>
+    <!-- Usando CDN oficial de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/cdn.min.js" defer></script>
+</head>
+<body x-data="{ open: false }" class="flex flex-col min-h-screen">
+
+    <!-- Encabezado -->
+    <header class="bg-blue-200 p-4 w-full">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('index') }}" aria-label="Ir al inicio">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" 
+                     alt="Logo de Tailwind" class="w-32 h-8">
+            </a>
+            <button @click="open = !open" class="block md:hidden text-gray-600 hover:text-black focus:outline-none" aria-label="Abrir menú">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <div class="hidden md:flex space-x-4">
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('index') }}">Inicio</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('insertar') }}">Insertar</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('mostrar') }}">Mostrar</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('busqueda') }}">Búsqueda</a>
+            </div>
+        </nav>
+        <div x-show="open" x-transition class="md:hidden space-y-2 mt-2 p-2 bg-blue-100 rounded">
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('index') }}">Inicio</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('insertar') }}">Insertar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('mostrar') }}">Mostrar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('busqueda') }}">Búsqueda</a>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container mx-auto flex-grow mb-12 px-4">
+        <h1 class="text-2xl font-bold text-center my-6">Temperaturas de los Países</h1>
+
+        <!-- Tabla de Temperaturas -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
+                <thead class="bg-blue-500 text-white">
+                    <tr>
+                        <th class="px-4 py-2 border">ID País</th>
+                        <th class="px-4 py-2 border">Temperatura</th>
+                        <th class="px-4 py-2 border">Sensación</th>
+                        <th class="px-4 py-2 border">Mínima</th>
+                        <th class="px-4 py-2 border">Máxima</th>
+                        <th class="px-4 py-2 border">Humedad</th>
+                        <th class="px-4 py-2 border">Amanecer</th>
+                        <th class="px-4 py-2 border">Atardecer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for temperatura in temperaturas %}
+                    <tr class="text-center border-b">
+                        <td class="px-4 py-2 border">{{ temperatura.idpais }}</td>
+                        <td class="px-4 py-2 border">{{ temperatura.temperatura }}°C</td>
+                        <td class="px-4 py-2 border">{{ temperatura.sensacion }}°C</td>
+                        <td class="px-4 py-2 border">{{ temperatura.minima }}°C</td>
+                        <td class="px-4 py-2 border">{{ temperatura.maxima }}°C</td>
+                        <td class="px-4 py-2 border">{{ temperatura.humedad }}%</td>
+                        <td class="px-4 py-2 border">{{ temperatura.amanecer }}</td>
+                        <td class="px-4 py-2 border">{{ temperatura.atardecer }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-gray-800 text-white py-4 w-full mt-auto">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>&copy; 2025 PIA.</div>
+            <div>Todos los derechos reservados.</div>
+        </div>
+    </footer>
+
+</body>
+</html>

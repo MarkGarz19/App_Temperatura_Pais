@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Temperaturas</title>
+    <!-- Usando el CDN oficial de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/cdn.min.js" defer></script>
+</head>
+<body x-data="{ open: false }" class="flex flex-col min-h-screen">
+
+    <!-- Encabezado -->
+    <header class="bg-blue-200 p-4 w-full">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('index') }}" aria-label="Ir al inicio">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" 
+                     alt="Logo de Tailwind" class="w-32 h-8">
+            </a>
+            <button @click="open = !open" class="block md:hidden text-gray-600 hover:text-black focus:outline-none" aria-label="Abrir menú">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <div class="hidden md:flex space-x-4">
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('index') }}">Inicio</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('insertar') }}">Insertar</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('mostrar') }}">Mostrar</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('busqueda') }}">Búsqueda</a>
+            </div>
+        </nav>
+        <div x-show="open" x-transition class="md:hidden space-y-2 mt-2 p-2 bg-blue-100 rounded">
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('index') }}">Inicio</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('insertar') }}">Insertar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('mostrar') }}">Mostrar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('busqueda') }}">Búsqueda</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto flex-grow flex flex-col items-center justify-center pt-15 mt-20 mb-20">
+
+        <!-- Formulario de Búsqueda -->
+        <form action="/buscar_fronteras" method="POST" class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg border border-gray-300">
+            <label for="pais" class="block text-lg font-semibold mb-2">Nombre del País:</label>
+            <input type="text" id="pais" name="pais" required class="border p-2 w-full rounded mb-4 focus:ring-2 focus:ring-blue-300">
+            <button type="submit" class="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">Buscar</button>
+        </form>
+
+        <!-- Mensaje de Error -->
+        {% if mensaje %}
+            <p class="text-red-500 mt-4">{{ mensaje }}</p>
+        {% endif %}
+
+        <!-- Información Climática del País Base -->
+        {% if pais_base %}
+        <div class="mt-6 w-full max-w-lg bg-white border border-gray-300 shadow-lg rounded-lg p-4">
+            <h2 class="text-lg font-semibold text-gray-700 text-center">Datos Climáticos del país: {{ pais_base }}</h2><br>
+            <p class="text-gray-600">🌡️ Temperatura: <strong>{{ temperatura_pais }}°C</strong></p>
+            <p class="text-gray-600">🔥 Sensación Térmica: <strong>{{ sensacion_pais }}°C</strong></p>
+            <p class="text-gray-600">🔺 Máxima: <strong>{{ maxima_pais }}°C</strong></p>
+            <p class="text-gray-600">🔻 Mínima: <strong>{{ minima_pais }}°C</strong></p>
+            <p class="text-gray-600">💧 Humedad: <strong>{{ humedad_pais }}%</strong></p>
+            <p class="text-gray-600">🌅 Amanecer: <strong>{{ amanecer_pais }}</strong></p>
+            <p class="text-gray-600">🌇 Atardecer: <strong>{{ atardecer_pais }}</strong></p>
+        </div>
+        {% endif %}
+
+        <!-- Tabla de Países Fronterizos -->
+        {% if fronteras %}
+        <div class="mt-8 w-full max-w-lg bg-white border border-gray-300 shadow-lg rounded-lg p-4">
+            <h3 class="text-lg font-semibold mt-6 text-center">Países Fronterizos</h3>
+            <div class="overflow-x-auto w-full max-w-lg mt-4">
+                <table class="w-full bg-white border border-gray-300 shadow-lg rounded-lg">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-2 text-left border-b">País Fronterizo</th>
+                            <th class="px-4 py-2 text-left border-b">Temperatura</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for frontera in fronteras %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2 border-b">{{ frontera.pais_frontera }}</td>
+                            <td class="px-4 py-2 border-b">
+                                {% if frontera.temperatura is not none %}
+                                    {{ frontera.temperatura }}°C
+                                {% else %}
+                                    No disponible
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 w-full mt-auto">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>&copy; 2025 PIA.</div>
+            <div>Todos los derechos reservados.</div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserción de datos</title>
+    <!-- Usando el CDN oficial de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.0.6/dist/cdn.min.js" defer></script>
+</head>
+<body x-data="{ open: false }" class="flex flex-col min-h-screen">
+
+    <!-- Encabezado -->
+    <header class="bg-blue-200 p-4 w-full">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="{{ url_for('index') }}" aria-label="Ir al inicio">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" 
+                     alt="Logo de Tailwind" class="w-32 h-8">
+            </a>
+            <button @click="open = !open" class="block md:hidden text-gray-600 hover:text-black focus:outline-none" aria-label="Abrir menú">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <div class="hidden md:flex space-x-4">
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('index') }}">Inicio</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('insertar') }}">Insertar</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('mostrar') }}">Mostrar</a>
+                <a class="text-gray-600 hover:text-black" href="{{ url_for('busqueda') }}">Búsqueda</a>
+            </div>
+        </nav>
+        <div x-show="open" x-transition class="md:hidden space-y-2 mt-2 p-2 bg-blue-100 rounded">
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('index') }}">Inicio</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('insertar') }}">Insertar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('mostrar') }}">Mostrar</a>
+            <a class="block text-gray-600 hover:text-black" href="{{ url_for('busqueda') }}">Búsqueda</a>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="container mx-auto flex-grow flex items-center justify-center pt-12">
+        <div class="text-center">
+            <h1 class="text-3xl font-semibold mb-6">Inserción de Datos en la Base de Datos</h1>
+            
+            <!-- Mensaje de éxito o error -->
+            {% if mensaje %}
+            <div class="p-4 mb-4 text-sm rounded-lg 
+                        {% if tipo_mensaje == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                {{ mensaje }}
+            </div>
+            {% endif %}
+            
+            <!-- Formulario de Inserción -->
+            <form action="{{ url_for('insertar_datos') }}" method="POST" class="space-y-4">
+                <button type="submit" class="w-full bg-blue-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-600 transition duration-300">
+                    Insertar Todos los Datos
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-gray-800 text-white py-4 w-full mt-auto">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>&copy; 2025 PIA.</div>
+            <div>Todos los derechos reservados.</div>
+        </div>
+    </footer>
+</body>
+</html>
