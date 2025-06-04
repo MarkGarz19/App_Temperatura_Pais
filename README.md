@@ -65,42 +65,6 @@ En caso que le salgo un error llamado unquote se debe ejecutar este codiog:
     pip install --upgrade flask werkzeug
 
 
-## Creacion de la base de datos
-CREATE TABLE paises (
-    idpais INT AUTO_INCREMENT PRIMARY KEY,
-    cca2 VARCHAR(2) UNIQUE NOT NULL,
-    cca3 VARCHAR(3) UNIQUE NOT NULL,
-    nombre VARCHAR(255) NOT NULL,
-    capital VARCHAR(255),
-    region VARCHAR(255),
-    subregion VARCHAR(255),
-    latitud DECIMAL(10, 6),
-    longitud DECIMAL(10, 6),
-    miembroUE BOOLEAN
-);
-
-CREATE TABLE fronteras (
-    idfrontera INT AUTO_INCREMENT PRIMARY KEY,
-    idpais INT NOT NULL,
-    cca3_frontera VARCHAR(3) NOT NULL,
-    FOREIGN KEY (idpais) REFERENCES paises(idpais),
-    FOREIGN KEY (cca3_frontera) REFERENCES paises(cca3)
-);
-
-CREATE TABLE temperaturas (
-    idtemperatura INT AUTO_INCREMENT PRIMARY KEY,
-    idpais INT NOT NULL,
-    timestamp DATETIME NOT NULL,
-    temperatura DECIMAL(5, 2),
-    sensacion DECIMAL(5, 2),
-    minima DECIMAL(5, 2),
-    maxima DECIMAL(5, 2),
-    humedad DECIMAL(5, 2),
-    amanecer DATETIME,
-    atardecer DATETIME,
-    FOREIGN KEY (idpais) REFERENCES paises(idpais)
-);
-
 Puedes instalar estas dependencias ejecutando:
 
 ```bash
