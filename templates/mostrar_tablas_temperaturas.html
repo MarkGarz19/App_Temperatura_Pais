@@ -46,6 +46,7 @@
             <table class="min-w-full bg-white border border-gray-300 shadow-md rounded-lg">
                 <thead class="bg-blue-500 text-white">
                     <tr>
+                        <th class="px-4 py-2 border">Pais</th>
                         <th class="px-4 py-2 border">ID País</th>
                         <th class="px-4 py-2 border">Temperatura</th>
                         <th class="px-4 py-2 border">Sensación</th>
@@ -59,6 +60,7 @@
                 <tbody>
                     {% for temperatura in temperaturas %}
                     <tr class="text-center border-b">
+                        <td class="px-4 py-2 border">{{ temperatura.pais }}</td>
                         <td class="px-4 py-2 border">{{ temperatura.idpais }}</td>
                         <td class="px-4 py-2 border">{{ temperatura.temperatura }}°C</td>
                         <td class="px-4 py-2 border">{{ temperatura.sensacion }}°C</td>

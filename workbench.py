@@ -78,38 +78,63 @@ class Aplicacion:
         print("Datos insertados correctamente en la tabla 'paises'.")
 
     def insertar_datos_fronteras(self):
-        """
-        Inserto los datos de las fronteras en la tabla 'fronteras' de la base de datos.
-        """
-        if not self.datos:  # Si no tengo datos, imprimo un mensaje y retorno
-            print("No hay datos para insertar.")
-            return
+            """
+            Inserto los datos de las fronteras en la tabla 'fronteras' de la base de datos,
+            asegurándome de que los países fronterizos existan en la tabla 'paises'.
+            """
+            if not self.datos:
+                print("No hay datos para insertar fronteras.")
+                return
 
-        cursor = self.conexion.cursor()  # Creo un cursor para interactuar con la base de datos
-        for pais in self.datos:  # Itero sobre los países
-            cca3 = pais.get("cca3", "")
-            fronteras = pais.get("borders", [])
+            cursor = self.conexion.cursor()
+            for pais in self.datos:
+                cca3_pais_base = pais.get("cca3", "")
+                fronteras = pais.get("borders", [])
 
-            if not cca3:  # Si no tengo el código cca3, salto este país
-                print("No se proporcionó un código cca3 para el país")
-                continue
+                if not cca3_pais_base:
+                    print("Advertencia: No se proporcionó un código cca3 para un país. Saltando entrada.")
+                    continue
 
-            # Obtengo el idpais usando el código cca3
-            cursor.execute("SELECT idpais FROM paises WHERE cca3 = %s", (cca3,))
-            resultado = cursor.fetchone()
-            cursor.fetchall()  # Limpio cualquier resultado pendiente
+                # Obtengo el idpais del país base usando su código cca3
+                try:
+                    cursor.execute("SELECT idpais FROM paises WHERE cca3 = %s", (cca3_pais_base,))
+                    resultado_pais_base = cursor.fetchone()
+                    # Clear any remaining results from the cursor buffer
+                    cursor.fetchall()
+                except mysql.connector.Error as err:
+                    print(f"Error al buscar idpais para {cca3_pais_base}: {err}")
+                    continue # Skip this country if there's a DB error looking it up
 
-            if resultado:  # Si encontré el país en la base de datos
-                idpais = resultado[0]
-                for frontera in fronteras:  # Inserto cada frontera en la tabla 'fronteras'
-                    cursor.execute(
-                        "INSERT INTO fronteras (idpais, cca3_frontera) VALUES (%s, %s)",
-                        (idpais, frontera),
-                    )
+                if not resultado_pais_base:
+                    print(f"Advertencia: El país base '{cca3_pais_base}' no se encontró en la tabla 'paises'. Saltando sus fronteras.")
+                    continue
 
-        # Hago commit para guardar los cambios
-        self.conexion.commit()
-        print("Datos insertados correctamente en la tabla 'fronteras'.")
+                idpais_base = resultado_pais_base[0]
+
+                for frontera_cca3 in fronteras:
+                    # Antes de insertar, verificamos si el país frontera existe en la tabla 'paises'
+                    try:
+                        cursor.execute("SELECT cca3 FROM paises WHERE cca3 = %s", (frontera_cca3,))
+                        resultado_frontera = cursor.fetchone()
+                        cursor.fetchall() # Clear any remaining results
+
+                        if resultado_frontera:
+                            # Si el país frontera existe, procedemos con la inserción
+                            cursor.execute(
+                                "INSERT INTO fronteras (idpais, cca3_frontera) VALUES (%s, %s)",
+                                (idpais_base, frontera_cca3),
+                            )
+                        else:
+                            print(f"Advertencia: La frontera '{frontera_cca3}' para el país '{cca3_pais_base}' no existe en la tabla 'paises'. No se insertará esta frontera.")
+                    except mysql.connector.Error as err:
+                        print(f"Error al insertar frontera {frontera_cca3} para {cca3_pais_base}: {err}")
+                    except Exception as e:
+                        print(f"Error inesperado procesando frontera {frontera_cca3} para {cca3_pais_base}: {e}")
+
+
+            self.conexion.commit() # Realizo el commit fuera del bucle para mejor rendimiento
+            print("Datos insertados correctamente en la tabla 'fronteras'. Las fronteras no existentes fueron omitidas.")
+
 
     def obtener_temperatura_json(self, capital):
         """
@@ -351,7 +376,20 @@ class Aplicacion:
         cursor = self.conexion.cursor(dictionary=True)
         print("\n📌 Tabla: TEMPERATURAS")
         
-        cursor.execute("SELECT * FROM temperaturas;")
+        cursor.execute("""
+            SELECT
+                p.nombre AS pais,
+                t.idpais,
+                t.temperatura,
+                t.sensacion,
+                t.minima,
+                t.maxima,
+                t.humedad,
+                t.amanecer,
+                t.atardecer
+            FROM temperaturas t
+            JOIN paises p ON t.idpais = p.idpais;
+        """)
         temperaturas = cursor.fetchall()
 
         # Convertir los campos 'amanecer' y 'atardecer' de timedelta a un formato legible
